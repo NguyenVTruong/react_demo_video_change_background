@@ -1,11 +1,30 @@
 import { useVideoCallPlugin } from "./useVideoCallPlugin";
 import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import backgroundImg from "../assets/images/pexels-photo-1563356.jpeg";
 
 const VideoCall = () => {
     const localVideoRef = useRef<HTMLVideoElement>(null);
     const remoteVideoRef = useRef<HTMLVideoElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
+    useEffect(() => {
+        const startCamera = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480 },
+                });
+
+                if (localVideoRef.current) {
+                    localVideoRef.current.srcObject = stream;
+                }
+            } catch (error) {
+                console.error("Error accessing webcam:", error);
+            }
+        };
+
+        startCamera();
+    }, []);
     const hangupByApp = () => {
         // console.log('FFFFFFFFFFFFFF');
         // let videoElement = document.getElementById('localVideo');
@@ -22,14 +41,15 @@ const VideoCall = () => {
         remoteVideoRef as RefObject<HTMLVideoElement>,
         audioRef as RefObject<HTMLVideoElement>,
         hangupByApp,
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.saokim.com.vn%2Fproject%2Fdu-an%2Fdesign-website-mobifone-public-cloud&psig=AOvVaw0ynDQUM559p2WBpVis5GTC&ust=1741876820575000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKC_4PvihIwDFQAAAAAdAAAAABAJ"
+        backgroundImg
     );
 
     return (
         <div>
-            <video ref={localVideoRef} autoPlay playsInline style={{ display: "none" }} />
-            <video ref={remoteVideoRef} autoPlay playsInline />
+            <video ref={localVideoRef} autoPlay playsInline style={{ display: "none",  width: "15%", height: "auto" }} />
+            <video ref={remoteVideoRef} autoPlay playsInline style={{ display: "none" }} />
             <audio ref={audioRef} autoPlay />
+            <canvas ref={canvasRef} style={{ width: "15%", height: "auto" }} />
         </div>
     );
 };
